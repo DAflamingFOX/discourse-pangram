@@ -4,7 +4,7 @@ module ::Pangram
   class PostsController < ::ApplicationController
     requires_plugin PLUGIN_NAME
     before_action :ensure_logged_in
-    before_action :ensure_staff
+    before_action :ensure_can_scan
 
     def scan
       post = Post.find_by(id: params[:post_id])
@@ -25,6 +25,7 @@ module ::Pangram
           ai_fraction: post.custom_fields["pangram_ai_fraction"].to_f,
           ai_assisted_fraction: post.custom_fields["pangram_ai_assisted_fraction"].to_f,
           human_fraction: post.custom_fields["pangram_human_fraction"].to_f,
+          confidence: post.custom_fields["pangram_confidence"]&.to_s,
           checked_at: post.custom_fields["pangram_checked_at"],
           scanned_version: post.version,
           cached: true
@@ -45,6 +46,7 @@ module ::Pangram
           ai_fraction: result[:fraction_ai] || post.custom_fields["pangram_ai_fraction"]&.to_f,
           ai_assisted_fraction: result[:fraction_ai_assisted] || post.custom_fields["pangram_ai_assisted_fraction"]&.to_f,
           human_fraction: result[:fraction_human] || post.custom_fields["pangram_human_fraction"]&.to_f,
+          confidence: result[:confidence] || post.custom_fields["pangram_confidence"]&.to_s,
           checked_at: post.custom_fields["pangram_checked_at"],
           scanned_version: post.version
         }
@@ -55,8 +57,10 @@ module ::Pangram
 
     private
 
-    def ensure_staff
-      raise Discourse::InvalidAccess unless current_user&.staff?
+    def ensure_can_scan
+      return if current_user&.staff?
+      min_tl = SiteSetting.pangram_min_trust_level_to_scan
+      raise Discourse::InvalidAccess unless current_user&.has_trust_level?(min_tl)
     end
   end
 end

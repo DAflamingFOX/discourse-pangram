@@ -22,12 +22,13 @@ pangram:
   pangram_min_word_count:
     default: 100
     client: false
-  pangram_visibility:
-    type: enum
-    choices:
-      - staff
-      - everyone
-    default: staff
+  pangram_min_trust_level_to_view:
+    default: 4
+    enum: "TrustLevelSetting"
+    client: true
+  pangram_min_trust_level_to_scan:
+    default: 4
+    enum: "TrustLevelSetting"
     client: true
   pangram_ignore_quotes:
     default: true

@@ -1,22 +1,61 @@
 import Component from "@glimmer/component";
-import dIcon from "discourse/ui-kit/helpers/d-icon";
+import { tracked } from "@glimmer/tracking";
 import { i18n } from "discourse-i18n";
+import { inject as service } from "@ember/service";
+import { action } from "@ember/object";
+import { modifier } from "ember-modifier";
+
+const manageSubscription = modifier((element, [post, component]) => {
+  if (!post || !post.id) return;
+  
+  const channel = `/pangram/posts/${post.id}`;
+  component.messageBus.subscribe(channel, component.handlePangramUpdate);
+  
+  return () => {
+    component.messageBus.unsubscribe(channel, component.handlePangramUpdate);
+  };
+});
 
 export default class PangramBadge extends Component {
+  @service messageBus;
+  @tracked updateCount = 0;
+
+  @action
+  handlePangramUpdate(data) {
+    if (!this.post) return;
+    this.post.setProperties({
+      pangram_ai_fraction: data.ai_fraction,
+      pangram_ai_assisted_fraction: data.ai_assisted_fraction,
+      pangram_human_fraction: data.human_fraction,
+      pangram_confidence: data.confidence,
+      pangram_checked_at: data.checked_at,
+      pangram_scanned_version: data.scanned_version || this.post.version,
+    });
+    this.updateCount++;
+  }
+
   get post() {
     return this.args.post;
   }
 
   get aiFraction() {
+    this.updateCount;
     return this.post?.pangram_ai_fraction;
   }
 
   get aiAssistedFraction() {
+    this.updateCount;
     return this.post?.pangram_ai_assisted_fraction;
   }
 
   get humanFraction() {
+    this.updateCount;
     return this.post?.pangram_human_fraction;
+  }
+  
+  get confidence() {
+    this.updateCount;
+    return this.post?.pangram_confidence;
   }
 
   get isVisible() {
@@ -50,17 +89,39 @@ export default class PangramBadge extends Component {
   }
 
   <template>
+    <span {{manageSubscription this.post this}} class="pangram-subscription-manager" style="display:none;"></span>
     {{#if this.isVisible}}
-      <div
-        class="pangram-badge {{this.severityClass}}"
-        title={{this.tooltipText}}
-      >
-        <span class="pangram-badge__icon">
-          {{dIcon "robot"}}
-        </span>
-        <span class="pangram-badge__label">
-          {{i18n "pangram.score_label" percentage=this.aiPercentage}}
-        </span>
+      <div class="pangram-badge-wrapper">
+        <div
+          class="pangram-badge {{this.severityClass}}"
+          title={{this.tooltipText}}
+        >
+          <div class="pangram-badge__inner">
+            <span class="pangram-badge__stat">
+              <span class="pangram-custom-icon pangram-icon-robot" title="AI"></span>
+              <span class="pangram-badge__value">{{this.aiPercentage}}%</span>
+            </span>
+            
+            <span class="pangram-badge__divider">|</span>
+            
+            <span class="pangram-badge__stat">
+              <span class="pangram-custom-icon pangram-icon-pencil-ai" title="AI Assisted"></span>
+              <span class="pangram-badge__value">{{this.aiAssistedPercentage}}%</span>
+            </span>
+            
+            <span class="pangram-badge__divider">|</span>
+            
+            <span class="pangram-badge__stat">
+              <span class="pangram-custom-icon pangram-icon-pencil" title="Human"></span>
+              <span class="pangram-badge__value">{{this.humanPercentage}}%</span>
+            </span>
+            
+            {{#if this.confidence}}
+              <span class="pangram-badge__divider">-</span>
+              <span class="pangram-badge__confidence">{{this.confidence}}</span>
+            {{/if}}
+          </div>
+        </div>
       </div>
     {{/if}}
   </template>

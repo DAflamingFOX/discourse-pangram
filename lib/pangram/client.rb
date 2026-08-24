@@ -90,11 +90,20 @@ module ::Pangram
       fraction_ai_assisted = (data["fraction_ai_assisted"] || data.dig("result", "fraction_ai_assisted") || 0.0).to_f
       fraction_human = (data["fraction_human"] || data.dig("result", "fraction_human") || 0.0).to_f
 
+      raw_conf = data["confidence"] || data.dig("result", "confidence")
+      if raw_conf.blank?
+        windows = data["windows"] || data.dig("result", "windows") || []
+        # Fallback to the confidence of the highest AI segment, or just the first segment if none
+        ai_window = windows.find { |w| w["label"].to_s =~ /AI/i } || windows.first
+        raw_conf = ai_window["confidence"] if ai_window
+      end
+
       {
         task_id: task_id,
         fraction_ai: fraction_ai.round(4),
         fraction_ai_assisted: fraction_ai_assisted.round(4),
         fraction_human: fraction_human.round(4),
+        confidence: raw_conf.to_s,
         headline: data["headline"] || data.dig("result", "headline"),
         windows: data["windows"] || data.dig("result", "windows") || [],
         raw: data

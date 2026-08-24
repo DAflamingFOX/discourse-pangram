@@ -1,36 +1,97 @@
+@use "lib/viewport";
+
+.pangram-badge-wrapper {
+  display: flex;
+
+  /* On narrow screens, .cooked text is flush left and has no top padding.
+     We match the flush left, and add a small bottom gap so it doesn't touch the text. */
+  margin-bottom: var(--space-4);
+  padding: 0;
+
+  @include viewport.from(sm) {
+    /* On wider screens, .cooked has padding-top and left/right padding.
+       We remove our bottom margin (so we don't double up on the gap)
+       and match the left/right padding exactly. */
+    margin-bottom: 0;
+    padding: 0 var(--topic-body-width-padding);
+  }
+}
+
 .pangram-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.35em;
-  padding: 0.15em 0.5em;
+  padding: 0.25em 0.5em;
   border-radius: 4px;
-  font-size: var(--font-down-1, 0.875em);
-  font-weight: 600;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
+  font-size: var(--font-down-1);
+  font-weight: 400;
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
   cursor: default;
   user-select: none;
   width: fit-content;
 
-  .d-icon {
-    font-size: 0.9em;
+  .pangram-badge__inner {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  .pangram-badge__stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  .pangram-badge__divider {
+    opacity: 0.5;
+    font-weight: normal;
   }
 
   &--low {
-    background-color: var(--success-low, rgb(46, 160, 67, 0.15));
-    color: var(--success-hover, #1a7f37);
-    border: 1px solid var(--success-medium, rgb(46, 160, 67, 0.4));
+    background-color: var(--success-low);
+    border: 2px solid var(--success-medium);
   }
 
   &--medium {
-    background-color: var(--highlight-low, rgb(210, 153, 34, 0.15));
-    color: var(--highlight-high, #9e6a03);
-    border: 1px solid var(--highlight-medium, rgb(210, 153, 34, 0.4));
+    background-color: var(--highlight-low);
+    border: 2px solid var(--highlight-medium);
   }
 
   &--high {
-    background-color: var(--danger-low, rgb(207, 34, 46, 0.15));
-    color: var(--danger, #cf222e);
-    border: 1px solid var(--danger-medium, rgb(207, 34, 46, 0.4));
+    background-color: var(--danger-low);
+    border: 2px solid var(--danger-medium);
   }
+}
+
+.pangram-custom-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-color: var(--primary);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
+
+.pangram-icon-robot {
+  mask-image: url("/plugins/pangram/images/robot-fill.svg");
+  -webkit-mask-image: url("/plugins/pangram/images/robot-fill.svg");
+}
+
+.pangram-icon-pencil-ai {
+  mask-image: url("/plugins/pangram/images/pencil-ai-fill.svg");
+  -webkit-mask-image: url("/plugins/pangram/images/pencil-ai-fill.svg");
+}
+
+.pangram-icon-pencil {
+  mask-image: url("/plugins/pangram/images/pencil-fill.svg");
+  -webkit-mask-image: url("/plugins/pangram/images/pencil-fill.svg");
+}
+
+.pangram-icon-qr-scan {
+  mask-image: url("/plugins/pangram/images/qr-scan-ai-line.svg");
+  -webkit-mask-image: url("/plugins/pangram/images/qr-scan-ai-line.svg");
 }

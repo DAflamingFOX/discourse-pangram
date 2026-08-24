@@ -21,6 +21,7 @@ module ::Jobs
           ai_fraction: post.custom_fields["pangram_ai_fraction"].to_f,
           ai_assisted_fraction: post.custom_fields["pangram_ai_assisted_fraction"].to_f,
           human_fraction: post.custom_fields["pangram_human_fraction"].to_f,
+          confidence: post.custom_fields["pangram_confidence"]&.to_s,
           checked_at: post.custom_fields["pangram_checked_at"],
           scanned_version: post.version,
           cached: true
@@ -56,6 +57,7 @@ module ::Jobs
           ai_fraction: post.custom_fields["pangram_ai_fraction"].to_f,
           ai_assisted_fraction: post.custom_fields["pangram_ai_assisted_fraction"].to_f,
           human_fraction: post.custom_fields["pangram_human_fraction"].to_f,
+          confidence: post.custom_fields["pangram_confidence"]&.to_s,
           task_id: post.custom_fields["pangram_task_id"],
           checked_at: post.custom_fields["pangram_checked_at"]
         }
@@ -68,6 +70,7 @@ module ::Jobs
       post.custom_fields["pangram_ai_fraction"] = result[:fraction_ai]
       post.custom_fields["pangram_ai_assisted_fraction"] = result[:fraction_ai_assisted]
       post.custom_fields["pangram_human_fraction"] = result[:fraction_human]
+      post.custom_fields["pangram_confidence"] = result[:confidence]
       post.custom_fields["pangram_task_id"] = result[:task_id]
       post.custom_fields["pangram_checked_at"] = Time.zone.now.iso8601
       post.custom_fields["pangram_scanned_version"] = post.version
@@ -81,10 +84,14 @@ module ::Jobs
         ai_fraction: result[:fraction_ai],
         ai_assisted_fraction: result[:fraction_ai_assisted],
         human_fraction: result[:fraction_human],
+        confidence: result[:confidence],
         checked_at: post.custom_fields["pangram_checked_at"],
         scanned_version: post.version
       }
 
+      # Delay for 1 second to ensure the client has finished rendering the post 
+      # and has subscribed to the MessageBus channel.
+      sleep 1
       ::MessageBus.publish("/pangram/posts/#{post.id}", payload)
 
       # Automated review flagging if threshold is exceeded

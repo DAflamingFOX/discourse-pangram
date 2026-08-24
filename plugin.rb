@@ -15,10 +15,13 @@ end
 
 require_relative "lib/pangram/engine"
 
+register_asset "stylesheets/pangram.scss"
+
 after_initialize do
   register_post_custom_field_type("pangram_ai_fraction", :float)
   register_post_custom_field_type("pangram_ai_assisted_fraction", :float)
   register_post_custom_field_type("pangram_human_fraction", :float)
+  register_post_custom_field_type("pangram_confidence", :string)
   register_post_custom_field_type("pangram_task_id", :string)
   register_post_custom_field_type("pangram_checked_at", :string)
   register_post_custom_field_type("pangram_scanned_version", :integer)
@@ -33,6 +36,7 @@ after_initialize do
         pangram_ai_fraction
         pangram_ai_assisted_fraction
         pangram_human_fraction
+        pangram_confidence
         pangram_checked_at
         pangram_scanned_version
         pangram_history
@@ -41,9 +45,16 @@ after_initialize do
   end
 
   include_pangram_condition = -> {
-    SiteSetting.pangram_enabled &&
-      (scope.is_staff? || SiteSetting.pangram_visibility == "everyone") &&
-      object.custom_fields["pangram_ai_fraction"].present?
+    return false unless SiteSetting.pangram_enabled
+    return false unless object.custom_fields["pangram_ai_fraction"].present?
+
+    return true if scope.is_staff?
+
+    min_tl = SiteSetting.pangram_min_trust_level_to_view
+    return true if min_tl == 0
+
+    user = scope.current_user
+    user.present? && user.has_trust_level?(min_tl)
   }
 
   add_to_serializer(
@@ -63,6 +74,12 @@ after_initialize do
     :pangram_human_fraction,
     include_condition: include_pangram_condition
   ) { object.custom_fields["pangram_human_fraction"]&.to_f }
+
+  add_to_serializer(
+    :post,
+    :pangram_confidence,
+    include_condition: include_pangram_condition
+  ) { object.custom_fields["pangram_confidence"]&.to_s }
 
   add_to_serializer(
     :post,

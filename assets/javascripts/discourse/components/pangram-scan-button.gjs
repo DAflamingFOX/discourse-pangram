@@ -8,11 +8,23 @@ import DButton from "discourse/ui-kit/d-button";
 import { i18n } from "discourse-i18n";
 
 export default class PangramScanButton extends Component {
-  static hidden(args, context) {
-    if (!context.currentUser?.staff || !context.siteSettings?.pangram_enabled) {
+  static shouldRender(args, state) {
+    if (!state.siteSettings?.pangram_enabled || !state.currentUser) {
+      return false;
+    }
+
+    if (state.currentUser.staff) {
       return true;
     }
-    return false;
+
+    const minTl = state.siteSettings.pangram_min_trust_level_to_scan;
+    return state.currentUser.trust_level >= minTl;
+  }
+
+  static hidden() {
+    // ALWAYS return true to force the button into the 3-dot (Show More) menu.
+    // If this returned false, it would render on the top level (next to Reply).
+    return true;
   }
 
   @service toasts;
@@ -72,6 +84,7 @@ export default class PangramScanButton extends Component {
             pangram_ai_fraction: data.ai_fraction,
             pangram_ai_assisted_fraction: data.ai_assisted_fraction,
             pangram_human_fraction: data.human_fraction,
+            pangram_confidence: data.confidence,
             pangram_checked_at: data.checked_at,
             pangram_scanned_version: data.scanned_version || post.version,
           });
@@ -101,6 +114,7 @@ export default class PangramScanButton extends Component {
           pangram_ai_fraction: response.ai_fraction,
           pangram_ai_assisted_fraction: response.ai_assisted_fraction,
           pangram_human_fraction: response.human_fraction,
+          pangram_confidence: response.confidence,
           pangram_checked_at: response.checked_at,
           pangram_scanned_version: response.scanned_version || post.version,
         });
@@ -122,15 +136,19 @@ export default class PangramScanButton extends Component {
     }
   }
 
+  get isDisabled() {
+    return this.isAlreadyScanned || this.scanning;
+  }
+
   <template>
     <DButton
       class="post-action-menu__pangram-scan"
       ...attributes
       @action={{this.scan}}
-      @disabled={{this.scanning}}
-      @icon={{if this.isAlreadyScanned "check" "robot"}}
+      @disabled={{this.isDisabled}}
       @title={{this.buttonTitle}}
-      @label="pangram.scan_action"
-    />
+    >
+      <span class="pangram-custom-icon pangram-icon-qr-scan" style="background-color: currentColor; width: 1.5em; height: 1.5em; margin: 0 -0.25em;"></span>
+    </DButton>
   </template>
 }

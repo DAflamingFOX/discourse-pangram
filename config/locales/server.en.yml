@@ -1,12 +1,14 @@
 en:
   site_settings:
     pangram_enabled: "Enable Pangram AI detection integrations."
-    pangram_api_key: "Pangram API key (x-api-key)."
+    pangram_api_key: "Pangram API key."
     pangram_mode: "Scan mode: 'manual' (staff scans via post menu button) or 'automatic' (posts scanned on creation/edit)."
     pangram_api_url: "Base URL for the Pangram API."
-    pangram_model: "Pangram API model name (e.g. pangram-3)."
+    pangram_model: "Pangram API model name (e.g. 'default', 'pangram-4')."
     pangram_min_word_count: "Minimum clean word count required to trigger an automatic scan."
+    pangram_min_trust_level_to_view: "Minimum trust level required to view Pangram AI detection scores."
+    pangram_min_trust_level_to_scan: "Minimum trust level required to manually scan posts for AI."
     pangram_visibility: "Who can view Pangram AI detection scores on posts ('staff' or 'everyone')."
-    pangram_ignore_quotes: "Exclude quote blocks ([quote]...[/quote]) before calculating word count and scanning."
-    pangram_ignore_code_blocks: "Exclude code blocks (```...``` and <code>...</code>) before calculating word count and scanning."
+    pangram_ignore_quotes: "Exclude quote blocks before calculating word count and scanning."
+    pangram_ignore_code_blocks: "Exclude code blocks before calculating word count and scanning."
     pangram_auto_flag_threshold: "Automatically send posts exceeding this AI percentage (1-100) to the Review Queue (0 to disable)."
