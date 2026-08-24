@@ -3,7 +3,19 @@ en:
     admin:
       site_settings:
         categories:
-          TODO_plugin_name: "Plugin Name"
+          pangram: "Pangram"
   js:
-    discourse_plugin_name:
-      placeholder: placeholder
+    pangram:
+      scan_action: "Scan with Pangram"
+      scan_action_title: "Check this post for AI-generated content using Pangram"
+      already_scanned: "This version of the post has already been scanned by Pangram."
+      already_scanned_title: "This post has already been scanned by Pangram for this version"
+      scanning: "Scanning post with Pangram..."
+      scan_queued: "Pangram scan queued."
+      scan_completed: "Pangram scan completed."
+      scan_failed: "Pangram scan failed. Please check your API key or server logs."
+      badge_title: "Pangram AI Content Analysis"
+      ai_fraction: "AI Generated"
+      ai_assisted_fraction: "AI Assisted"
+      human_fraction: "Human Written"
+      score_label: "%{percentage}% AI"

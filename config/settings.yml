@@ -1,4 +1,40 @@
-TODO_plugin_name:
-  plugin_name_enabled:
+pangram:
+  pangram_enabled:
     default: false
     client: true
+  pangram_api_key:
+    default: ""
+    client: false
+    secret: true
+  pangram_mode:
+    type: enum
+    choices:
+      - manual
+      - automatic
+    default: manual
+    client: true
+  pangram_api_url:
+    default: "https://text.external-api.pangram.com"
+    client: false
+  pangram_model:
+    default: "pangram-3"
+    client: false
+  pangram_min_word_count:
+    default: 100
+    client: false
+  pangram_visibility:
+    type: enum
+    choices:
+      - staff
+      - everyone
+    default: staff
+    client: true
+  pangram_ignore_quotes:
+    default: true
+    client: false
+  pangram_ignore_code_blocks:
+    default: true
+    client: false
+  pangram_auto_flag_threshold:
+    default: 0
+    client: false

@@ -1,5 +1,3 @@
-# **Plugin Name** Plugin
+# Discourse-Pangram
 
-**Plugin Summary**
-
-For more information, please see: **url to meta topic**
+Discourse plugin to integrate Pangram AI detection on user posts.

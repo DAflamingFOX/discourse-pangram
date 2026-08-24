@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-MyPluginModule::Engine.routes.draw do
-  get "/examples" => "examples#index"
-  # define routes here
+Pangram::Engine.routes.draw do
+  post "/posts/:post_id/scan" => "posts#scan"
 end
 
-Discourse::Application.routes.draw { mount ::MyPluginModule::Engine, at: "my-plugin" }
+Discourse::Application.routes.draw { mount ::Pangram::Engine, at: "pangram" }

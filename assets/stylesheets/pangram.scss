@@ -1,0 +1,36 @@
+.pangram-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.15em 0.5em;
+  border-radius: 4px;
+  font-size: var(--font-down-1, 0.875em);
+  font-weight: 600;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  cursor: default;
+  user-select: none;
+  width: fit-content;
+
+  .d-icon {
+    font-size: 0.9em;
+  }
+
+  &--low {
+    background-color: var(--success-low, rgb(46, 160, 67, 0.15));
+    color: var(--success-hover, #1a7f37);
+    border: 1px solid var(--success-medium, rgb(46, 160, 67, 0.4));
+  }
+
+  &--medium {
+    background-color: var(--highlight-low, rgb(210, 153, 34, 0.15));
+    color: var(--highlight-high, #9e6a03);
+    border: 1px solid var(--highlight-medium, rgb(210, 153, 34, 0.4));
+  }
+
+  &--high {
+    background-color: var(--danger-low, rgb(207, 34, 46, 0.15));
+    color: var(--danger, #cf222e);
+    border: 1px solid var(--danger-medium, rgb(207, 34, 46, 0.4));
+  }
+}
