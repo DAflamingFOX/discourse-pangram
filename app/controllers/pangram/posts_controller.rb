@@ -26,6 +26,8 @@ module ::Pangram
           ai_assisted_fraction: post.custom_fields["pangram_ai_assisted_fraction"].to_f,
           human_fraction: post.custom_fields["pangram_human_fraction"].to_f,
           confidence: post.custom_fields["pangram_confidence"]&.to_s,
+          task_id: post.custom_fields["pangram_task_id"],
+          public_dashboard_link: post.custom_fields["pangram_dashboard_link"],
           checked_at: post.custom_fields["pangram_checked_at"],
           scanned_version: post.version,
           cached: true
@@ -47,6 +49,8 @@ module ::Pangram
           ai_assisted_fraction: result[:fraction_ai_assisted] || post.custom_fields["pangram_ai_assisted_fraction"]&.to_f,
           human_fraction: result[:fraction_human] || post.custom_fields["pangram_human_fraction"]&.to_f,
           confidence: result[:confidence] || post.custom_fields["pangram_confidence"]&.to_s,
+          task_id: result[:task_id] || post.custom_fields["pangram_task_id"],
+          public_dashboard_link: result[:public_dashboard_link] || post.custom_fields["pangram_dashboard_link"],
           checked_at: post.custom_fields["pangram_checked_at"],
           scanned_version: post.version
         }

@@ -85,6 +85,8 @@ export default class PangramScanButton extends Component {
             pangram_ai_assisted_fraction: data.ai_assisted_fraction,
             pangram_human_fraction: data.human_fraction,
             pangram_confidence: data.confidence,
+            pangram_task_id: data.task_id,
+            pangram_dashboard_link: data.public_dashboard_link,
             pangram_checked_at: data.checked_at,
             pangram_scanned_version: data.scanned_version || post.version,
           });
@@ -115,6 +117,8 @@ export default class PangramScanButton extends Component {
           pangram_ai_assisted_fraction: response.ai_assisted_fraction,
           pangram_human_fraction: response.human_fraction,
           pangram_confidence: response.confidence,
+          pangram_task_id: response.task_id,
+          pangram_dashboard_link: response.public_dashboard_link,
           pangram_checked_at: response.checked_at,
           pangram_scanned_version: response.scanned_version || post.version,
         });

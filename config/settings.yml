@@ -30,6 +30,9 @@ pangram:
     default: 4
     enum: "TrustLevelSetting"
     client: true
+  pangram_enable_public_dashboard_link:
+    default: true
+    client: true
   pangram_ignore_quotes:
     default: true
     client: false

@@ -8,6 +8,7 @@ en:
     pangram_min_word_count: "Minimum clean word count required to trigger an automatic scan."
     pangram_min_trust_level_to_view: "Minimum trust level required to view Pangram AI detection scores."
     pangram_min_trust_level_to_scan: "Minimum trust level required to manually scan posts for AI."
+    pangram_enable_public_dashboard_link: "Request and link to a public dashboard report for each scan."
     pangram_visibility: "Who can view Pangram AI detection scores on posts ('staff' or 'everyone')."
     pangram_ignore_quotes: "Exclude quote blocks before calculating word count and scanning."
     pangram_ignore_code_blocks: "Exclude code blocks before calculating word count and scanning."

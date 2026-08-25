@@ -22,6 +22,8 @@ module ::Jobs
           ai_assisted_fraction: post.custom_fields["pangram_ai_assisted_fraction"].to_f,
           human_fraction: post.custom_fields["pangram_human_fraction"].to_f,
           confidence: post.custom_fields["pangram_confidence"]&.to_s,
+          task_id: post.custom_fields["pangram_task_id"],
+          public_dashboard_link: post.custom_fields["pangram_dashboard_link"],
           checked_at: post.custom_fields["pangram_checked_at"],
           scanned_version: post.version,
           cached: true
@@ -59,6 +61,7 @@ module ::Jobs
           human_fraction: post.custom_fields["pangram_human_fraction"].to_f,
           confidence: post.custom_fields["pangram_confidence"]&.to_s,
           task_id: post.custom_fields["pangram_task_id"],
+          public_dashboard_link: post.custom_fields["pangram_dashboard_link"],
           checked_at: post.custom_fields["pangram_checked_at"]
         }
         post.custom_fields["pangram_history"] = history.to_json
@@ -67,12 +70,16 @@ module ::Jobs
       client = ::Pangram::Client.new
       result = client.analyze(cleaned_text)
 
+      checked_at = Time.zone.now.iso8601
+
+      # Also store the latest scores as direct custom fields for easy querying/serialization
       post.custom_fields["pangram_ai_fraction"] = result[:fraction_ai]
       post.custom_fields["pangram_ai_assisted_fraction"] = result[:fraction_ai_assisted]
       post.custom_fields["pangram_human_fraction"] = result[:fraction_human]
       post.custom_fields["pangram_confidence"] = result[:confidence]
       post.custom_fields["pangram_task_id"] = result[:task_id]
-      post.custom_fields["pangram_checked_at"] = Time.zone.now.iso8601
+      post.custom_fields["pangram_dashboard_link"] = result[:public_dashboard_link]
+      post.custom_fields["pangram_checked_at"] = checked_at
       post.custom_fields["pangram_scanned_version"] = post.version
       post.save_custom_fields(true)
 
@@ -85,6 +92,8 @@ module ::Jobs
         ai_assisted_fraction: result[:fraction_ai_assisted],
         human_fraction: result[:fraction_human],
         confidence: result[:confidence],
+        task_id: result[:task_id],
+        public_dashboard_link: result[:public_dashboard_link],
         checked_at: post.custom_fields["pangram_checked_at"],
         scanned_version: post.version
       }

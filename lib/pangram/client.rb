@@ -35,6 +35,7 @@ module ::Pangram
       uri = URI("#{base_url}/task")
       payload = { text: text }
       payload[:model] = model if model.present? && model != "default"
+      payload[:public_dashboard_link] = true if SiteSetting.pangram_enable_public_dashboard_link
 
       Rails.logger.info("[Pangram API] Submitting task to POST #{uri} with payload: #{payload.inspect}")
 
@@ -106,6 +107,7 @@ module ::Pangram
         confidence: raw_conf.to_s,
         headline: data["headline"] || data.dig("result", "headline"),
         windows: data["windows"] || data.dig("result", "windows") || [],
+        public_dashboard_link: data["dashboard_link"] || data.dig("result", "dashboard_link"),
         raw: data
       }
     end

@@ -23,6 +23,7 @@ after_initialize do
   register_post_custom_field_type("pangram_human_fraction", :float)
   register_post_custom_field_type("pangram_confidence", :string)
   register_post_custom_field_type("pangram_task_id", :string)
+  register_post_custom_field_type("pangram_dashboard_link", :string)
   register_post_custom_field_type("pangram_checked_at", :string)
   register_post_custom_field_type("pangram_scanned_version", :integer)
   register_post_custom_field_type("pangram_history", :json)
@@ -37,6 +38,8 @@ after_initialize do
         pangram_ai_assisted_fraction
         pangram_human_fraction
         pangram_confidence
+        pangram_task_id
+        pangram_dashboard_link
         pangram_checked_at
         pangram_scanned_version
         pangram_history
@@ -80,6 +83,18 @@ after_initialize do
     :pangram_confidence,
     include_condition: include_pangram_condition
   ) { object.custom_fields["pangram_confidence"]&.to_s }
+
+  add_to_serializer(
+    :post,
+    :pangram_task_id,
+    include_condition: include_pangram_condition
+  ) { object.custom_fields["pangram_task_id"] }
+
+  add_to_serializer(
+    :post,
+    :pangram_dashboard_link,
+    include_condition: include_pangram_condition
+  ) { object.custom_fields["pangram_dashboard_link"]&.to_s }
 
   add_to_serializer(
     :post,

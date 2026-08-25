@@ -18,6 +18,8 @@ export default {
         "pangram_ai_assisted_fraction",
         "pangram_human_fraction",
         "pangram_confidence",
+        "pangram_task_id",
+        "pangram_dashboard_link",
         "pangram_checked_at",
         "pangram_scanned_version",
         "pangram_history"
