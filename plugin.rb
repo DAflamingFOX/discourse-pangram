@@ -43,11 +43,11 @@ after_initialize do
         pangram_checked_at
         pangram_scanned_version
         pangram_history
-      ]
+      ],
     )
   end
 
-  include_pangram_condition = -> {
+  include_pangram_condition = -> do
     return false unless SiteSetting.pangram_enabled
     return false if object.custom_fields["pangram_ai_fraction"].blank?
 
@@ -58,7 +58,7 @@ after_initialize do
 
     user = scope.current_user
     user.present? && user.has_trust_level?(min_tl)
-  }
+  end
 
   {
     pangram_ai_fraction: :to_f,
@@ -68,7 +68,7 @@ after_initialize do
     pangram_task_id: nil,
     pangram_dashboard_link: :to_s,
     pangram_checked_at: nil,
-    pangram_scanned_version: :to_i
+    pangram_scanned_version: :to_i,
   }.each do |field, cast_method|
     add_to_serializer(:post, field, include_condition: include_pangram_condition) do
       value = object.custom_fields[field.to_s]
@@ -79,9 +79,10 @@ after_initialize do
   add_to_serializer(
     :post,
     :pangram_history,
-    include_condition: -> {
-      SiteSetting.pangram_enabled && scope.is_staff? && object.custom_fields["pangram_history"].present?
-    }
+    include_condition: -> do
+      SiteSetting.pangram_enabled && scope.is_staff? &&
+        object.custom_fields["pangram_history"].present?
+    end,
   ) do
     begin
       JSON.parse(object.custom_fields["pangram_history"])

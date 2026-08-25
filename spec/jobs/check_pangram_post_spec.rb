@@ -3,7 +3,9 @@
 require "rails_helper"
 
 RSpec.describe ::Jobs::CheckPangramPost do
-  fab!(:post) { Fabricate(:post, raw: "This is a test post that has enough text to be scanned. " * 15) }
+  fab!(:post) do
+    Fabricate(:post, raw: "This is a test post that has enough text to be scanned. " * 15)
+  end
 
   before do
     SiteSetting.pangram_enabled = true
@@ -22,14 +24,15 @@ RSpec.describe ::Jobs::CheckPangramPost do
       fraction_ai: 0.92,
       fraction_ai_assisted: 0.05,
       fraction_human: 0.03,
-      headline: "AI Generated"
+      headline: "AI Generated",
     }
 
     expect_any_instance_of(::Pangram::Client).to receive(:analyze).and_return(mock_result)
 
-    messages = MessageBus.track_publish("/pangram/posts/#{post.id}") do
-      described_class.new.execute(post_id: post.id, force: true)
-    end
+    messages =
+      MessageBus.track_publish("/pangram/posts/#{post.id}") do
+        described_class.new.execute(post_id: post.id, force: true)
+      end
 
     post.reload
     expect(post.custom_fields["pangram_ai_fraction"]).to eq("0.92").or eq(0.92)

@@ -6,10 +6,14 @@ require "uri"
 
 module ::Pangram
   class Client
-    class Error < StandardError; end
-    class AuthenticationError < Error; end
-    class TaskFailedError < Error; end
-    class TimeoutError < Error; end
+    class Error < StandardError
+    end
+    class AuthenticationError < Error
+    end
+    class TaskFailedError < Error
+    end
+    class TimeoutError < Error
+    end
 
     attr_reader :api_key, :base_url, :model
 
@@ -37,7 +41,9 @@ module ::Pangram
       payload[:model] = model if model.present?
       payload[:public_dashboard_link] = true if SiteSetting.pangram_enable_public_dashboard_link
 
-      Rails.logger.info("[Pangram API] Submitting task to POST #{uri} with payload: #{payload.inspect}")
+      Rails.logger.info(
+        "[Pangram API] Submitting task to POST #{uri} with payload: #{payload.inspect}",
+      )
 
       response = request(Net::HTTP::Post, uri, payload)
       data = parse_json(response.body)
@@ -65,15 +71,20 @@ module ::Pangram
         data = get_task_status(task_id)
         stage = (data["stage"] || data["status"] || data["state"] || "").to_s.upcase
 
-        Rails.logger.info("[Pangram API] Polling task #{task_id} (Attempt #{attempts}/#{max_attempts}) - Stage: #{stage}, Response: #{data.inspect}")
+        Rails.logger.info(
+          "[Pangram API] Polling task #{task_id} (Attempt #{attempts}/#{max_attempts}) - Stage: #{stage}, Response: #{data.inspect}",
+        )
 
-        if %w[STAGE_SUCCESS SUCCESS COMPLETED DONE].include?(stage) || data["fraction_ai"].present? || data.dig("result", "fraction_ai").present?
+        if %w[STAGE_SUCCESS SUCCESS COMPLETED DONE].include?(stage) ||
+             data["fraction_ai"].present? || data.dig("result", "fraction_ai").present?
           result = format_result(task_id, data)
-          Rails.logger.info("[Pangram API] Task #{task_id} completed: AI=#{(result[:fraction_ai] * 100).round(2)}%, AI-Assisted=#{(result[:fraction_ai_assisted] * 100).round(2)}%, Human=#{(result[:fraction_human] * 100).round(2)}%")
+          Rails.logger.info(
+            "[Pangram API] Task #{task_id} completed: AI=#{(result[:fraction_ai] * 100).round(2)}%, AI-Assisted=#{(result[:fraction_ai_assisted] * 100).round(2)}%, Human=#{(result[:fraction_human] * 100).round(2)}%",
+          )
           return result
         elsif %w[STAGE_FAILED FAILED STAGE_ERROR ERROR].include?(stage)
           Rails.logger.error("[Pangram API] Task #{task_id} failed with response: #{data.inspect}")
-          raise TaskFailedError, "Pangram task failed: #{data['error'] || data['message'] || stage}"
+          raise TaskFailedError, "Pangram task failed: #{data["error"] || data["message"] || stage}"
         else
           # Still processing (e.g. STAGE_QUEUED, STAGE_RUNNING, QUEUED, RUNNING)
           sleep(base_sleep)
@@ -88,7 +99,8 @@ module ::Pangram
 
     def format_result(task_id, data)
       fraction_ai = (data["fraction_ai"] || data.dig("result", "fraction_ai") || 0.0).to_f
-      fraction_ai_assisted = (data["fraction_ai_assisted"] || data.dig("result", "fraction_ai_assisted") || 0.0).to_f
+      fraction_ai_assisted =
+        (data["fraction_ai_assisted"] || data.dig("result", "fraction_ai_assisted") || 0.0).to_f
       fraction_human = (data["fraction_human"] || data.dig("result", "fraction_human") || 0.0).to_f
 
       raw_conf = data["confidence"] || data.dig("result", "confidence")
@@ -108,7 +120,7 @@ module ::Pangram
         headline: data["headline"] || data.dig("result", "headline"),
         windows: data["windows"] || data.dig("result", "windows") || [],
         public_dashboard_link: data["dashboard_link"] || data.dig("result", "dashboard_link"),
-        raw: data
+        raw: data,
       }
     end
 
@@ -122,19 +134,20 @@ module ::Pangram
       req["Content-Type"] = "application/json"
       req["x-api-key"] = api_key
 
-      if body_hash
-        req.body = body_hash.to_json
-      end
+      req.body = body_hash.to_json if body_hash
 
       response = http.request(req)
-      Rails.logger.info("[Pangram API] Response #{req.method} #{uri.path} -> HTTP #{response.code} (body length: #{response.body&.length || 0})")
+      Rails.logger.info(
+        "[Pangram API] Response #{req.method} #{uri.path} -> HTTP #{response.code} (body length: #{response.body&.length || 0})",
+      )
 
       case response.code.to_i
       when 200..299
         response
       when 401, 403
         Rails.logger.error("[Pangram API] Auth error HTTP #{response.code}: #{response.body}")
-        raise AuthenticationError, "Pangram API authentication failed (HTTP #{response.code}): #{response.body}"
+        raise AuthenticationError,
+              "Pangram API authentication failed (HTTP #{response.code}): #{response.body}"
       else
         Rails.logger.error("[Pangram API] Error HTTP #{response.code}: #{response.body}")
         raise Error, "Pangram API error (HTTP #{response.code}): #{response.body}"

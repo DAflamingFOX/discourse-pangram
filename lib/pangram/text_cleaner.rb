@@ -11,13 +11,9 @@ module ::Pangram
 
       text = raw_text.dup
 
-      if ignore_quotes
-        text = strip_quotes(text)
-      end
+      text = strip_quotes(text) if ignore_quotes
 
-      if ignore_code_blocks
-        text = strip_code_blocks(text)
-      end
+      text = strip_code_blocks(text) if ignore_code_blocks
 
       text.strip
     end
@@ -32,7 +28,7 @@ module ::Pangram
       # Recursively remove BBCode [quote] blocks (handles nested quotes)
       loop do
         prev = result.dup
-        result.gsub!(/\[quote\b[^\]]*\].*?\[\/quote\]/mi, "")
+        result.gsub!(%r{\[quote\b[^\]]*\].*?\[/quote\]}mi, "")
         break if result == prev
       end
       # Strip Markdown blockquotes (> ...) line by line
@@ -45,8 +41,8 @@ module ::Pangram
       # Fenced markdown code blocks ``` ... ```
       result.gsub!(/```[\s\S]*?```/m, "")
       # HTML <pre> and <code> blocks
-      result.gsub!(/<pre\b[^>]*>[\s\S]*?<\/pre>/mi, "")
-      result.gsub!(/<code\b[^>]*>[\s\S]*?<\/code>/mi, "")
+      result.gsub!(%r{<pre\b[^>]*>[\s\S]*?</pre>}mi, "")
+      result.gsub!(%r{<code\b[^>]*>[\s\S]*?</code>}mi, "")
       # Inline code `...`
       result.gsub!(/`[^`\n]+`/, "")
       result

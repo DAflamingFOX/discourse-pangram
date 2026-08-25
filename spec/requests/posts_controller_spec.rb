@@ -22,15 +22,20 @@ RSpec.describe ::Pangram::PostsController do
       expect(response.status).to eq(403)
     end
 
-    it "enqueues check job when requested by staff" do
+    it "executes check job directly when requested by staff" do
       sign_in(admin)
 
-      expect {
-        post "/pangram/posts/#{target_post.id}/scan.json"
-      }.to change { ::Jobs::CheckPangramPost.jobs.size }.by(1)
+      ::Jobs::CheckPangramPost
+        .any_instance
+        .expects(:execute)
+        .with(post_id: target_post.id, force: true)
+        .returns({ fraction_ai: 0.88 })
+
+      post "/pangram/posts/#{target_post.id}/scan.json"
 
       expect(response.status).to eq(200)
       expect(response.parsed_body["success"]).to eq(true)
+      expect(response.parsed_body["ai_fraction"]).to eq(0.88)
     end
   end
 end
