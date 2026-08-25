@@ -1,34 +1,43 @@
 import Component from "@glimmer/component";
 import { tracked } from "@glimmer/tracking";
-import { i18n } from "discourse-i18n";
-import { inject as service } from "@ember/service";
 import { action } from "@ember/object";
+import { service } from "@ember/service";
 import { modifier } from "ember-modifier";
+import { i18n } from "discourse-i18n";
 
 const manageSubscription = modifier((element, [post, component]) => {
-  if (!post || !post.id) return;
-  
+  if (!post || !post.id) {
+    return;
+  }
+
   const channel = `/pangram/posts/${post.id}`;
   component.messageBus.subscribe(channel, component.handlePangramUpdate);
-  
+
   return () => {
     component.messageBus.unsubscribe(channel, component.handlePangramUpdate);
   };
 });
 
 export default class PangramBadge extends Component {
+  // eslint-disable-next-line discourse/no-unused-services
   @service messageBus;
   @service siteSettings;
+
   @tracked updateCount = 0;
 
   get showReportLink() {
     this.updateCount;
-    return this.siteSettings.pangram_enable_public_dashboard_link && this.post?.pangram_dashboard_link;
+    return (
+      this.siteSettings.pangram_enable_public_dashboard_link &&
+      this.post?.pangram_dashboard_link
+    );
   }
 
   @action
   handlePangramUpdate(data) {
-    if (!this.post) return;
+    if (!this.post) {
+      return;
+    }
     this.post.setProperties({
       pangram_ai_fraction: data.ai_fraction,
       pangram_ai_assisted_fraction: data.ai_assisted_fraction,
@@ -59,7 +68,7 @@ export default class PangramBadge extends Component {
     this.updateCount;
     return this.post?.pangram_human_fraction;
   }
-  
+
   get confidence() {
     this.updateCount;
     return this.post?.pangram_confidence;
@@ -96,7 +105,11 @@ export default class PangramBadge extends Component {
   }
 
   <template>
-    <span {{manageSubscription this.post this}} class="pangram-subscription-manager" style="display:none;"></span>
+    <span
+      {{manageSubscription this.post this}}
+      class="pangram-subscription-manager"
+      style="display:none;"
+    ></span>
     {{#if this.isVisible}}
       <div class="pangram-badge-wrapper">
         {{#if this.showReportLink}}
@@ -110,27 +123,42 @@ export default class PangramBadge extends Component {
           >
             <div class="pangram-badge__inner">
               <span class="pangram-badge__stat">
-                <span class="pangram-custom-icon pangram-icon-robot" title="AI"></span>
+                <span
+                  class="pangram-custom-icon pangram-icon-robot"
+                  title="AI"
+                ></span>
                 <span class="pangram-badge__value">{{this.aiPercentage}}%</span>
               </span>
-              
+
               <span class="pangram-badge__divider">|</span>
-              
+
               <span class="pangram-badge__stat">
-                <span class="pangram-custom-icon pangram-icon-pencil-ai" title="AI Assisted"></span>
-                <span class="pangram-badge__value">{{this.aiAssistedPercentage}}%</span>
+                <span
+                  class="pangram-custom-icon pangram-icon-pencil-ai"
+                  title="AI Assisted"
+                ></span>
+                <span
+                  class="pangram-badge__value"
+                >{{this.aiAssistedPercentage}}%</span>
               </span>
-              
+
               <span class="pangram-badge__divider">|</span>
-              
+
               <span class="pangram-badge__stat">
-                <span class="pangram-custom-icon pangram-icon-pencil" title="Human"></span>
-                <span class="pangram-badge__value">{{this.humanPercentage}}%</span>
+                <span
+                  class="pangram-custom-icon pangram-icon-pencil"
+                  title="Human"
+                ></span>
+                <span
+                  class="pangram-badge__value"
+                >{{this.humanPercentage}}%</span>
               </span>
-              
+
               {{#if this.confidence}}
                 <span class="pangram-badge__divider">-</span>
-                <span class="pangram-badge__confidence">{{this.confidence}}</span>
+                <span
+                  class="pangram-badge__confidence"
+                >{{this.confidence}}</span>
               {{/if}}
             </div>
           </a>
@@ -141,27 +169,42 @@ export default class PangramBadge extends Component {
           >
             <div class="pangram-badge__inner">
               <span class="pangram-badge__stat">
-                <span class="pangram-custom-icon pangram-icon-robot" title="AI"></span>
+                <span
+                  class="pangram-custom-icon pangram-icon-robot"
+                  title="AI"
+                ></span>
                 <span class="pangram-badge__value">{{this.aiPercentage}}%</span>
               </span>
-              
+
               <span class="pangram-badge__divider">|</span>
-              
+
               <span class="pangram-badge__stat">
-                <span class="pangram-custom-icon pangram-icon-pencil-ai" title="AI Assisted"></span>
-                <span class="pangram-badge__value">{{this.aiAssistedPercentage}}%</span>
+                <span
+                  class="pangram-custom-icon pangram-icon-pencil-ai"
+                  title="AI Assisted"
+                ></span>
+                <span
+                  class="pangram-badge__value"
+                >{{this.aiAssistedPercentage}}%</span>
               </span>
-              
+
               <span class="pangram-badge__divider">|</span>
-              
+
               <span class="pangram-badge__stat">
-                <span class="pangram-custom-icon pangram-icon-pencil" title="Human"></span>
-                <span class="pangram-badge__value">{{this.humanPercentage}}%</span>
+                <span
+                  class="pangram-custom-icon pangram-icon-pencil"
+                  title="Human"
+                ></span>
+                <span
+                  class="pangram-badge__value"
+                >{{this.humanPercentage}}%</span>
               </span>
-              
+
               {{#if this.confidence}}
                 <span class="pangram-badge__divider">-</span>
-                <span class="pangram-badge__confidence">{{this.confidence}}</span>
+                <span
+                  class="pangram-badge__confidence"
+                >{{this.confidence}}</span>
               {{/if}}
             </div>
           </div>

@@ -54,17 +54,16 @@ export default class PangramScanButton extends Component {
   @action
   async scan() {
     const post = this.post;
-    console.log("PANGRAM: Button clicked for post", post?.id);
 
     if (!post?.id || this.scanning) {
-      console.log("PANGRAM: Aborting due to no post id or already scanning");
       return;
     }
 
     if (this.isAlreadyScanned) {
-      console.log("PANGRAM: Already scanned");
       if (this.toasts?.info) {
-        this.toasts.info({ data: { message: i18n("pangram.already_scanned") } });
+        this.toasts.info({
+          data: { message: i18n("pangram.already_scanned") },
+        });
       }
       return;
     }
@@ -78,7 +77,6 @@ export default class PangramScanButton extends Component {
     const channel = `/pangram/posts/${post.id}`;
     if (this.messageBus?.subscribe) {
       this.messageBus.subscribe(channel, (data) => {
-        console.log("PANGRAM: Received message bus data", data);
         if (data?.post_id === post.id) {
           post.setProperties({
             pangram_ai_fraction: data.ai_fraction,
@@ -105,11 +103,9 @@ export default class PangramScanButton extends Component {
 
     try {
       const url = `/pangram/posts/${post.id}/scan`;
-      console.log("PANGRAM: Calling ajax URL:", url);
       const response = await ajax(url, {
         type: "POST",
       });
-      console.log("PANGRAM: Ajax response:", response);
 
       if (response?.ai_fraction !== undefined) {
         post.setProperties({
@@ -124,18 +120,20 @@ export default class PangramScanButton extends Component {
         });
 
         if (this.toasts?.success) {
-          this.toasts.success({ data: { message: i18n("pangram.scan_completed") } });
+          this.toasts.success({
+            data: { message: i18n("pangram.scan_completed") },
+          });
         }
       } else if (response?.cached) {
         if (this.toasts?.info) {
-          this.toasts.info({ data: { message: i18n("pangram.already_scanned") } });
+          this.toasts.info({
+            data: { message: i18n("pangram.already_scanned") },
+          });
         }
       }
     } catch (error) {
-      console.error("PANGRAM: Ajax error:", error);
       popupAjaxError(error);
     } finally {
-      console.log("PANGRAM: Resetting scanning state");
       this.scanning = false;
     }
   }
@@ -152,7 +150,10 @@ export default class PangramScanButton extends Component {
       @disabled={{this.isDisabled}}
       @title={{this.buttonTitle}}
     >
-      <span class="pangram-custom-icon pangram-icon-qr-scan" style="background-color: currentColor; width: 1.5em; height: 1.5em; margin: 0 -0.25em;"></span>
+      <span
+        class="pangram-custom-icon pangram-icon-qr-scan"
+        style="background-color: currentColor; width: 1.5em; height: 1.5em; margin: 0 -0.25em;"
+      ></span>
     </DButton>
   </template>
 }

@@ -49,7 +49,7 @@ after_initialize do
 
   include_pangram_condition = -> {
     return false unless SiteSetting.pangram_enabled
-    return false unless object.custom_fields["pangram_ai_fraction"].present?
+    return false if object.custom_fields["pangram_ai_fraction"].blank?
 
     return true if scope.is_staff?
 
@@ -60,53 +60,21 @@ after_initialize do
     user.present? && user.has_trust_level?(min_tl)
   }
 
-  add_to_serializer(
-    :post,
-    :pangram_ai_fraction,
-    include_condition: include_pangram_condition
-  ) { object.custom_fields["pangram_ai_fraction"]&.to_f }
-
-  add_to_serializer(
-    :post,
-    :pangram_ai_assisted_fraction,
-    include_condition: include_pangram_condition
-  ) { object.custom_fields["pangram_ai_assisted_fraction"]&.to_f }
-
-  add_to_serializer(
-    :post,
-    :pangram_human_fraction,
-    include_condition: include_pangram_condition
-  ) { object.custom_fields["pangram_human_fraction"]&.to_f }
-
-  add_to_serializer(
-    :post,
-    :pangram_confidence,
-    include_condition: include_pangram_condition
-  ) { object.custom_fields["pangram_confidence"]&.to_s }
-
-  add_to_serializer(
-    :post,
-    :pangram_task_id,
-    include_condition: include_pangram_condition
-  ) { object.custom_fields["pangram_task_id"] }
-
-  add_to_serializer(
-    :post,
-    :pangram_dashboard_link,
-    include_condition: include_pangram_condition
-  ) { object.custom_fields["pangram_dashboard_link"]&.to_s }
-
-  add_to_serializer(
-    :post,
-    :pangram_checked_at,
-    include_condition: include_pangram_condition
-  ) { object.custom_fields["pangram_checked_at"] }
-
-  add_to_serializer(
-    :post,
-    :pangram_scanned_version,
-    include_condition: include_pangram_condition
-  ) { object.custom_fields["pangram_scanned_version"]&.to_i }
+  {
+    pangram_ai_fraction: :to_f,
+    pangram_ai_assisted_fraction: :to_f,
+    pangram_human_fraction: :to_f,
+    pangram_confidence: :to_s,
+    pangram_task_id: nil,
+    pangram_dashboard_link: :to_s,
+    pangram_checked_at: nil,
+    pangram_scanned_version: :to_i
+  }.each do |field, cast_method|
+    add_to_serializer(:post, field, include_condition: include_pangram_condition) do
+      value = object.custom_fields[field.to_s]
+      cast_method ? value&.public_send(cast_method) : value
+    end
+  end
 
   add_to_serializer(
     :post,

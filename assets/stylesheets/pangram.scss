@@ -71,27 +71,20 @@
   mask-size: contain;
   mask-repeat: no-repeat;
   mask-position: center;
-  -webkit-mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
 }
 
 .pangram-icon-robot {
   mask-image: url("/plugins/pangram/images/robot-fill.svg");
-  -webkit-mask-image: url("/plugins/pangram/images/robot-fill.svg");
 }
 
 .pangram-icon-pencil-ai {
   mask-image: url("/plugins/pangram/images/pencil-ai-fill.svg");
-  -webkit-mask-image: url("/plugins/pangram/images/pencil-ai-fill.svg");
 }
 
 .pangram-icon-pencil {
   mask-image: url("/plugins/pangram/images/pencil-fill.svg");
-  -webkit-mask-image: url("/plugins/pangram/images/pencil-fill.svg");
 }
 
 .pangram-icon-qr-scan {
   mask-image: url("/plugins/pangram/images/qr-scan-ai-line.svg");
-  -webkit-mask-image: url("/plugins/pangram/images/qr-scan-ai-line.svg");
 }

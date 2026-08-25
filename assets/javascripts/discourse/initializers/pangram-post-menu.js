@@ -10,7 +10,7 @@ export default {
       return;
     }
 
-    withPluginApi("1.0.0", (api) => {
+    withPluginApi((api) => {
       // 1. Tell Ember to track these properties on Post models for EVERYONE.
       // This is necessary so `setProperties` triggers re-renders on the frontend.
       api.addTrackedPostProperties(

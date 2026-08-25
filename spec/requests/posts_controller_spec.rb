@@ -3,9 +3,9 @@
 require "rails_helper"
 
 RSpec.describe ::Pangram::PostsController do
-  fab!(:admin) { Fabricate(:admin) }
-  fab!(:user) { Fabricate(:user) }
-  fab!(:post) { Fabricate(:post) }
+  fab!(:admin)
+  fab!(:user)
+  fab!(:post)
 
   before do
     SiteSetting.pangram_enabled = true
