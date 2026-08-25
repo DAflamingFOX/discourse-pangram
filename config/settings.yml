@@ -1,4 +1,4 @@
-pangram:
+plugins:
   pangram_enabled:
     default: false
     client: true
