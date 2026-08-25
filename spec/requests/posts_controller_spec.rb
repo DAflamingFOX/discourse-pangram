@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe ::Pangram::PostsController do
   fab!(:admin)
   fab!(:user)
-  fab!(:post)
+  fab!(:target_post, :post)
 
   before do
     SiteSetting.pangram_enabled = true
@@ -14,11 +14,11 @@ RSpec.describe ::Pangram::PostsController do
 
   describe "POST /pangram/posts/:post_id/scan" do
     it "rejects anonymous and regular users" do
-      post "/pangram/posts/#{post.id}/scan.json"
+      post "/pangram/posts/#{target_post.id}/scan.json"
       expect(response.status).to eq(403).or eq(404)
 
       sign_in(user)
-      post "/pangram/posts/#{post.id}/scan.json"
+      post "/pangram/posts/#{target_post.id}/scan.json"
       expect(response.status).to eq(403)
     end
 
@@ -26,7 +26,7 @@ RSpec.describe ::Pangram::PostsController do
       sign_in(admin)
 
       expect {
-        post "/pangram/posts/#{post.id}/scan.json"
+        post "/pangram/posts/#{target_post.id}/scan.json"
       }.to change { ::Jobs::CheckPangramPost.jobs.size }.by(1)
 
       expect(response.status).to eq(200)

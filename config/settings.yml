@@ -17,7 +17,7 @@ pangram:
     default: "https://text.external-api.pangram.com"
     client: false
   pangram_model:
-    default: "pangram-3"
+    default: "default"
     client: false
   pangram_min_word_count:
     default: 100

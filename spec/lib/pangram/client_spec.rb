@@ -16,7 +16,7 @@ RSpec.describe ::Pangram::Client do
       stub_request(:post, "https://text.external-api.pangram.com/task")
         .with(
           headers: { "x-api-key" => "test-api-key", "Content-Type" => "application/json" },
-          body: { text: "Check this message", model: "pangram-3" }.to_json
+          body: { text: "Check this message", model: "default", public_dashboard_link: true }.to_json
         )
         .to_return(status: 200, body: { task_id: "task-123" }.to_json)
 

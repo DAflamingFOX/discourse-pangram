@@ -20,7 +20,7 @@ module ::Pangram
     )
       @api_key = api_key
       @base_url = (base_url.presence || "https://text.external-api.pangram.com").chomp("/")
-      @model = model.presence || "pangram-3"
+      @model = model.presence || "default"
     end
 
     def analyze(text)
@@ -34,7 +34,7 @@ module ::Pangram
 
       uri = URI("#{base_url}/task")
       payload = { text: text }
-      payload[:model] = model if model.present? && model != "default"
+      payload[:model] = model if model.present?
       payload[:public_dashboard_link] = true if SiteSetting.pangram_enable_public_dashboard_link
 
       Rails.logger.info("[Pangram API] Submitting task to POST #{uri} with payload: #{payload.inspect}")
