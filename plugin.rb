@@ -2,7 +2,7 @@
 
 # name: pangram
 # about: A plugin to feed messages through the Pangram API to check for AI content.
-# version: 0.0.1
+# version: 0.1.0
 # authors: Jeffrey Morris
 # url: https://github.com/daflamingfox/pangram-plugin
 # required_version: 2.7.0
